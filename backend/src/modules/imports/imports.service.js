@@ -30,8 +30,10 @@ const processImport = async (filePath, originalFilename, userId) => {
 
     await loadErrors(errors, importId);
 
-    const totalRecords = rows.length;
-    const invalidRecords = errors.length;
+const totalRecords = rows.length;
+const invalidRecords = new Set(
+  errors.map((error) => error.rowNumber)
+).size;
 
     await pool.query(
       `UPDATE imports
