@@ -21,3 +21,6 @@ frontend/dist/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Archivo CSV proporcionado para pruebas
+usuarios_prueba_etl.csv
