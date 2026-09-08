@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.*
+
+# Excepción: plantilla de variables
+!.env.example
+
+# Archivos subidos durante la ejecución
+uploads/
+
+# Logs
+*.log
+
+# Angular
+frontend/.angular/
+frontend/dist/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
