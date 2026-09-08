@@ -3,6 +3,7 @@ const authRoutes = require('./modules/auth/auth.routes');
 const usersRoutes = require('./modules/users/users.routes');
 const importsRoutes = require('./modules/imports/imports.routes');
 const recordsRoutes = require('./modules/records/records.routes');
+const reportsRoutes = require('./modules/reports/reports.routes');
 const app = express();
 
 app.use(express.json());
@@ -10,6 +11,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/imports', importsRoutes);
 app.use('/api/records', recordsRoutes);
+app.use('/api/reports', reportsRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
