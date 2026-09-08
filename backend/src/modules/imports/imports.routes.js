@@ -15,4 +15,16 @@ router.post(
   importsController.createImport
 );
 
+router.get(
+  '/',
+  authenticateToken,
+  importsController.getImports
+);
+
+router.get(
+  '/:id/errors',
+  authenticateToken,
+  importsController.getImportErrors
+);
+
 module.exports = router;

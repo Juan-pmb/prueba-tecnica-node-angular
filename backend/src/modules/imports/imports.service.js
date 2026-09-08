@@ -68,6 +68,46 @@ const processImport = async (filePath, originalFilename, userId) => {
   }
 };
 
+const getImports = async () => {
+  const result = await pool.query(
+    `SELECT
+      i.id,
+      i.original_filename,
+      i.uploaded_at,
+      i.uploaded_by,
+      u.name AS uploaded_by_name,
+      i.total_records,
+      i.valid_records,
+      i.invalid_records,
+      i.status
+     FROM imports i
+     INNER JOIN users u ON u.id = i.uploaded_by
+     ORDER BY i.id DESC`
+  );
+
+  return result.rows;
+};
+
+const getImportErrors = async (importId) => {
+  const result = await pool.query(
+    `SELECT
+      id,
+      row_number,
+      field,
+      received_value,
+      description,
+      created_at
+     FROM import_errors
+     WHERE import_id = $1
+     ORDER BY row_number, id`,
+    [importId]
+  );
+
+  return result.rows;
+};
+
 module.exports = {
-  processImport
+  processImport,
+  getImports,
+  getImportErrors
 };
