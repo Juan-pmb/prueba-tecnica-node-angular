@@ -241,4 +241,28 @@ test('should return import details by id', async () => {
   expect(response.body).toHaveProperty('invalid_records', 0);
   expect(response.body).toHaveProperty('status', 'COMPLETADO');
 });
+
+test('should reject upload for CONSULTA role', async () => {
+  const loginResponse = await request(app)
+    .post('/api/auth/login')
+    .send({
+      email: 'consulta@prueba.com',
+      password: 'Consulta123'
+    });
+
+  const token = loginResponse.body.token;
+
+  const csv = [
+    'tipo_documento,documento,nombres,apellidos,fecha_nacimiento,email,ciudad,estado',
+    `CC,${Date.now()}07,Ana,Gomez,1990-05-10,ana@test.com,Bogota,ACTIVO`
+  ].join('\n');
+
+  const response = await request(app)
+    .post('/api/imports')
+    .set('Authorization', `Bearer ${token}`)
+    .attach('file', Buffer.from(csv), 'consulta.csv');
+
+  expect(response.statusCode).toBe(404);
+  expect(response.body.message).toBe('Recurso no encontrado');
+});
 });
