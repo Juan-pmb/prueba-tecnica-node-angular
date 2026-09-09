@@ -1,0 +1,96 @@
+<section class="dashboard">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Resumen general del sistema</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      Cargando información...
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (!loading && reports) {
+    <div class="stats-grid">
+
+      <article class="stat-card">
+        <span class="stat-label">Usuarios registrados</span>
+        <strong class="stat-value">
+          {{ reports.users.total }}
+        </strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Archivos procesados</span>
+        <strong class="stat-value">
+          {{ reports.imports.total }}
+        </strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Registros procesados</span>
+        <strong class="stat-value">
+          {{ reports.imports.processedRecords }}
+        </strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Registros válidos</span>
+        <strong class="stat-value">
+          {{ reports.imports.validRecords }}
+        </strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Registros inválidos</span>
+        <strong class="stat-value">
+          {{ reports.imports.invalidRecords }}
+        </strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Errores registrados</span>
+        <strong class="stat-value">
+          {{ reports.errors.total }}
+        </strong>
+      </article>
+
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-header">
+        <h2>Estado de importaciones</h2>
+      </div>
+
+      <div class="summary-grid">
+        <div>
+          <span>Completadas</span>
+          <strong>{{ reports.imports.completed }}</strong>
+        </div>
+
+        <div>
+          <span>Con error</span>
+          <strong>{{ reports.imports.failed }}</strong>
+        </div>
+
+        <div>
+          <span>Registros activos</span>
+          <strong>{{ reports.records.active }}</strong>
+        </div>
+
+        <div>
+          <span>Registros inactivos</span>
+          <strong>{{ reports.records.inactive }}</strong>
+        </div>
+      </div>
+    </div>
+  }
+</section>

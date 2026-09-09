@@ -2,6 +2,33 @@ require('dotenv').config();
 
 const request = require('supertest');
 const app = require('../src/app');
+const pool = require('../src/config/database');
+
+const createdImportIds = [];
+
+afterAll(async () => {
+  if (createdImportIds.length > 0) {
+    await pool.query(
+      `DELETE FROM import_errors
+       WHERE import_id = ANY($1::int[])`,
+      [createdImportIds]
+    );
+
+    await pool.query(
+      `DELETE FROM records
+       WHERE import_id = ANY($1::int[])`,
+      [createdImportIds]
+    );
+
+    await pool.query(
+      `DELETE FROM imports
+       WHERE id = ANY($1::int[])`,
+      [createdImportIds]
+    );
+  }
+
+  await pool.end();
+});
 
 describe('POST /api/imports', () => {
   test('should return 404 when CONSULTA tries to upload a CSV', async () => {
@@ -58,6 +85,8 @@ test('should allow ADMIN to upload and process a valid CSV', async () => {
   expect(response.body.validRecords).toBe(2);
   expect(response.body.invalidRecords).toBe(0);
   expect(response.body.status).toBe('COMPLETADO');
+
+  createdImportIds.push(response.body.importId);
 });
 
 //datos mixtos
@@ -89,6 +118,7 @@ test('should process valid records and log invalid records', async () => {
   expect(response.body.validRecords).toBe(1);
   expect(response.body.invalidRecords).toBe(1);
   expect(response.body.status).toBe('COMPLETADO');
+  createdImportIds.push(response.body.importId);
 });
 
 test('should return import errors for an import', async () => {
@@ -117,6 +147,7 @@ test('should return import errors for an import', async () => {
   expect(importResponse.statusCode).toBe(201);
 
   const importId = importResponse.body.importId;
+  createdImportIds.push(importId);
 
   const errorsResponse = await request(app)
     .get(`/api/imports/${importId}/errors`)
@@ -201,6 +232,7 @@ test('should detect incomplete records', async () => {
   expect(response.body.totalRecords).toBe(1);
   expect(response.body.validRecords).toBe(0);
   expect(response.body.invalidRecords).toBe(1);
+  createdImportIds.push(response.body.importId);
 });
 
 test('should return import details by id', async () => {
@@ -228,6 +260,7 @@ test('should return import details by id', async () => {
   expect(importResponse.statusCode).toBe(201);
 
   const importId = importResponse.body.importId;
+  createdImportIds.push(importId);
 
   const response = await request(app)
     .get(`/api/imports/${importId}`)

@@ -2,6 +2,7 @@ const reportsService = require('./reports.service');
 
 const getReports = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store');
     const reports = await reportsService.getReports();
 
     return res.status(200).json(reports);

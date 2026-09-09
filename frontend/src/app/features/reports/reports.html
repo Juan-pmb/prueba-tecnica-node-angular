@@ -1,0 +1,196 @@
+<section class="reports-page">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Reportes</h1>
+      <p>Resumen de la información procesada en el sistema.</p>
+    </div>
+
+    @if (reports) {
+      <div class="report-date">
+        Información actualizada
+      </div>
+    }
+
+  </div>
+
+  @if (errorMessage) {
+    <div class="message error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (loading) {
+
+    <div class="loading-card">
+      Cargando reportes...
+    </div>
+
+  } @else if (reports) {
+
+    <div class="section-title">
+      <h2>Registros</h2>
+      <span>Información almacenada</span>
+    </div>
+
+    <div class="metrics-grid">
+
+      <div class="metric-card">
+        <span class="metric-label">Total de registros</span>
+        <strong>{{ reports.records.total }}</strong>
+        <span class="metric-description">
+          Registros almacenados
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Registros activos</span>
+        <strong>{{ reports.records.active }}</strong>
+        <span class="metric-description">
+          Estado ACTIVO
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Registros inactivos</span>
+        <strong>{{ reports.records.inactive }}</strong>
+        <span class="metric-description">
+          Estado INACTIVO
+        </span>
+      </div>
+
+    </div>
+
+    <div class="section-title">
+      <h2>Importaciones</h2>
+      <span>Procesamiento de archivos</span>
+    </div>
+
+    <div class="metrics-grid">
+
+      <div class="metric-card">
+        <span class="metric-label">Archivos procesados</span>
+        <strong>{{ reports.imports.total }}</strong>
+        <span class="metric-description">
+          Total de importaciones
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Importaciones completadas</span>
+        <strong>{{ reports.imports.completed }}</strong>
+        <span class="metric-description">
+          Procesadas correctamente
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Importaciones fallidas</span>
+        <strong>{{ reports.imports.failed }}</strong>
+        <span class="metric-description">
+          Con error de procesamiento
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Registros válidos procesados</span>
+        <strong>{{ reports.imports.validRecords }}</strong>
+        <span class="metric-description">
+          Filas válidas durante las importaciones
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Registros inválidos</span>
+        <strong>{{ reports.imports.invalidRecords }}</strong>
+        <span class="metric-description">
+          Filas que generaron errores
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-label">Errores registrados</span>
+        <strong>{{ reports.errors.total }}</strong>
+        <span class="metric-description">
+          Errores encontrados durante el ETL
+        </span>
+      </div>
+
+    </div>
+
+    <div class="analysis-card">
+
+      <div class="analysis-header">
+        <div>
+          <h2>Estado de los registros</h2>
+          <p>Distribución actual de registros activos e inactivos.</p>
+        </div>
+      </div>
+
+      <div class="status-row">
+
+        <div class="status-item">
+          <div class="status-info">
+            <span class="status-dot active"></span>
+            <span>Activos</span>
+          </div>
+
+          <strong>
+            {{ reports.records.active }}
+          </strong>
+        </div>
+
+        <div class="status-item">
+          <div class="status-info">
+            <span class="status-dot inactive"></span>
+            <span>Inactivos</span>
+          </div>
+
+          <strong>
+            {{ reports.records.inactive }}
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="status-bar">
+
+        @if (reports.records.total > 0) {
+
+          <div
+            class="active-bar"
+            [style.width.%]="
+              (reports.records.active / reports.records.total) * 100
+            "
+          ></div>
+
+        }
+
+      </div>
+
+      <div class="status-percentages">
+
+        <span>
+          {{
+            reports.records.total > 0
+              ? ((reports.records.active / reports.records.total) * 100 | number:'1.0-1')
+              : 0
+          }}% activos
+        </span>
+
+        <span>
+          {{
+            reports.records.total > 0
+              ? ((reports.records.inactive / reports.records.total) * 100 | number:'1.0-1')
+              : 0
+          }}% inactivos
+        </span>
+
+      </div>
+
+    </div>
+
+  }
+
+</section>

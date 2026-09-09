@@ -18,18 +18,21 @@ router.post(
 router.get(
   '/',
   authenticateToken,
+  authorizeRoles('ADMIN', 'OPERADOR'),
   importsController.getImports
 );
 
 router.get(
   '/:id/errors',
   authenticateToken,
+  authorizeRoles('ADMIN', 'OPERADOR'),
   importsController.getImportErrors
 );
 
 router.get(
   '/:id',
   authenticateToken,
+  authorizeRoles('ADMIN', 'OPERADOR'),
   importsController.getImportById
 );
 

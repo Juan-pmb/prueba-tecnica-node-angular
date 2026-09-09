@@ -1,0 +1,249 @@
+<section class="users-page">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Usuarios</h1>
+      <p>Administra los usuarios y sus roles de acceso.</p>
+    </div>
+
+    <button
+      type="button"
+      class="new-user-button"
+      (click)="openForm()"
+    >
+      + Nuevo usuario
+    </button>
+
+  </div>
+
+  @if (successMessage) {
+    <div class="message success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage && !showForm) {
+    <div class="message error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="table-card">
+
+    @if (loading) {
+
+      <div class="loading">
+        Cargando usuarios...
+      </div>
+
+    } @else if (users.length === 0) {
+
+      <div class="empty-state">
+        <strong>No hay usuarios registrados</strong>
+      </div>
+
+    } @else {
+
+      <div class="table-wrapper">
+
+<table>
+
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Usuario</th>
+      <th>Correo</th>
+      <th>Rol</th>
+      <th>Estado</th>
+      <th>Fecha de registro</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    @for (user of users; track user.id) {
+
+      <tr>
+
+        <td class="user-id">
+          #{{ user.id }}
+        </td>
+
+        <td>
+          <div class="user-cell">
+
+            <div class="avatar">
+              {{ user.name.charAt(0).toUpperCase() }}
+            </div>
+
+            <strong>
+              {{ user.name }}
+            </strong>
+
+          </div>
+        </td>
+
+        <td>
+          {{ user.email }}
+        </td>
+
+        <td>
+
+          <span
+            class="role"
+            [class.admin]="user.role === 'ADMIN'"
+            [class.operator]="user.role === 'OPERADOR'"
+            [class.consult]="user.role === 'CONSULTA'"
+          >
+            {{ user.role }}
+          </span>
+
+        </td>
+
+        <td>
+
+          <span
+            class="status"
+            [class.active]="user.status === 'ACTIVO'"
+            [class.inactive]="user.status === 'INACTIVO'"
+          >
+            {{ user.status }}
+          </span>
+
+        </td>
+
+        <td>
+          {{ user.created_at ? (user.created_at | date:'dd/MM/yyyy') : '—' }}
+        </td>
+
+      </tr>
+
+    }
+
+  </tbody>
+
+</table>
+
+      </div>
+
+    }
+
+  </div>
+
+  @if (showForm) {
+
+    <div class="modal-backdrop">
+
+      <div class="modal">
+
+        <div class="modal-header">
+
+          <div>
+            <h2>Nuevo usuario</h2>
+            <p>Registra un usuario y asigna su rol.</p>
+          </div>
+
+          <button
+            type="button"
+            class="close-button"
+            (click)="closeForm()"
+            [disabled]="saving"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+
+        </div>
+
+        @if (errorMessage) {
+          <div class="message error modal-message">
+            {{ errorMessage }}
+          </div>
+        }
+
+        <form (ngSubmit)="createUser()">
+
+          <div class="form-group">
+            <label for="name">Nombre</label>
+
+            <input
+              id="name"
+              name="name"
+              type="text"
+              [(ngModel)]="form.name"
+              placeholder="Nombre completo"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+
+            <input
+              id="email"
+              name="email"
+              type="email"
+              [(ngModel)]="form.email"
+              placeholder="usuario@correo.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              [(ngModel)]="form.password"
+              placeholder="Mínimo 6 caracteres"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="role">Rol</label>
+
+            <select
+              id="role"
+              name="role"
+              [(ngModel)]="form.role"
+            >
+              <option value="ADMIN">ADMIN</option>
+              <option value="OPERADOR">OPERADOR</option>
+              <option value="CONSULTA">CONSULTA</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="cancel-button"
+              (click)="closeForm()"
+              [disabled]="saving"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="save-button"
+              [disabled]="saving"
+            >
+              {{ saving ? 'Guardando...' : 'Crear usuario' }}
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  }
+
+</section>

@@ -1,0 +1,218 @@
+<section class="records-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Registros</h1>
+      <p>Consulta los registros procesados mediante las importaciones.</p>
+    </div>
+
+    <div class="total-badge">
+      {{ totalRecords }} registros
+    </div>
+  </div>
+
+  <div class="filters-card">
+
+    <div class="filter-group search-group">
+      <label for="search">Buscar</label>
+
+      <input
+        id="search"
+        type="text"
+        [(ngModel)]="search"
+        (keyup.enter)="searchRecords()"
+        placeholder="Documento, nombre, apellido o correo"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label for="documentType">Tipo de documento</label>
+
+      <select
+        id="documentType"
+        [(ngModel)]="documentType"
+      >
+        <option value="">Todos</option>
+        <option value="CC">CC</option>
+        <option value="CE">CE</option>
+        <option value="TI">TI</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="status">Estado</label>
+
+      <select
+        id="status"
+        [(ngModel)]="status"
+      >
+        <option value="">Todos</option>
+        <option value="ACTIVO">Activo</option>
+        <option value="INACTIVO">Inactivo</option>
+      </select>
+    </div>
+
+    <div class="filter-actions">
+
+      <button
+        type="button"
+        class="search-button"
+        (click)="searchRecords()"
+      >
+        Buscar
+      </button>
+
+      <button
+        type="button"
+        class="clear-button"
+        (click)="clearFilters()"
+      >
+        Limpiar
+      </button>
+
+    </div>
+
+  </div>
+
+  @if (errorMessage) {
+    <div class="message error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="table-card">
+
+    @if (loading) {
+
+      <div class="loading">
+        Cargando registros...
+      </div>
+
+    } @else if (records.length === 0) {
+
+      <div class="empty-state">
+        <strong>No se encontraron registros</strong>
+        <span>Prueba con otros criterios de búsqueda.</span>
+      </div>
+
+    } @else {
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Ciudad</th>
+              <th>Fecha nacimiento</th>
+              <th>Estado</th>
+              <th>Importación</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (item of records; track item.id) {
+
+              <tr>
+
+                <td>
+                  <div class="document">
+                    <span>{{ item.document_type }}</span>
+                    <strong>{{ item.document }}</strong>
+                  </div>
+                </td>
+
+                <td>
+                  <strong class="person-name">
+                    {{ item.first_name }} {{ item.last_name }}
+                  </strong>
+                </td>
+
+                <td>
+                  <span class="email">
+                    {{ item.email }}
+                  </span>
+                </td>
+
+                <td>
+                  {{ item.city }}
+                </td>
+
+                <td>
+                  {{ item.birth_date | date:'dd/MM/yyyy' }}
+                </td>
+
+                <td>
+                  <span
+                    class="status"
+                    [class.active]="item.status === 'ACTIVO'"
+                    [class.inactive]="item.status === 'INACTIVO'"
+                  >
+                    {{ item.status === 'ACTIVO' ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="import-id">
+                    #{{ item.import_id }}
+                  </span>
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      @if (totalPages > 1) {
+
+        <div class="pagination">
+
+          <button
+            type="button"
+            class="pagination-arrow"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+          >
+            ‹
+          </button>
+
+          @for (page of pages; track page) {
+
+            <button
+              type="button"
+              class="pagination-page"
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+
+          }
+
+          <button
+            type="button"
+            class="pagination-arrow"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            ›
+          </button>
+
+        </div>
+
+      }
+
+    }
+
+  </div>
+
+</section>

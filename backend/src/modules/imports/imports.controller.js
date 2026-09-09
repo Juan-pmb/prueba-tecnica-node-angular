@@ -32,7 +32,13 @@ const createImport = async (req, res) => {
 
 const getImports = async (req, res) => {
   try {
-    const imports = await importsService.getImports();
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit, 10) || 6, 1),
+      50
+    );
+
+    const imports = await importsService.getImports(page, limit);
 
     return res.status(200).json(imports);
   } catch (error) {

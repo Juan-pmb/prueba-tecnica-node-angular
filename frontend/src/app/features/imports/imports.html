@@ -1,0 +1,433 @@
+<section class="imports-page">
+
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Gestión de datos</span>
+
+    <p>
+      Carga archivos CSV y consulta el historial de procesamiento.
+    </p>
+  </div>
+</header>
+
+  <!-- Carga de archivo -->
+  <section class="upload-card">
+
+    <div class="upload-content">
+
+      <div class="upload-icon">
+        CSV
+      </div>
+
+      <div>
+        <h2>Cargar archivo CSV</h2>
+
+        <p>
+          Selecciona un archivo CSV para iniciar el proceso de extracción,
+          validación y carga de información.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="upload-controls">
+
+      <label class="file-input">
+
+        <span>
+          {{ selectedFile?.name || 'Seleccionar archivo CSV' }}
+        </span>
+
+        <input
+          type="file"
+          accept=".csv,text/csv"
+          (change)="onFileSelected($event)"
+        />
+
+      </label>
+
+      <button
+        type="button"
+        class="upload-button"
+        [disabled]="!selectedFile || loading"
+        (click)="uploadFile()"
+      >
+        @if (loading) {
+          Procesando...
+        } @else {
+          Procesar archivo
+        }
+      </button>
+
+    </div>
+
+    @if (successMessage) {
+      <div class="message success">
+        {{ successMessage }}
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="message error">
+        {{ errorMessage }}
+      </div>
+    }
+
+  </section>
+
+
+  <!-- Historial -->
+  <section class="history-section">
+
+    <div class="section-heading">
+
+  <div class="history-title">
+    <span class="eyebrow">Historial</span>
+
+    <span class="history-description">
+      Archivos procesados
+    </span>
+  </div>
+
+  <span class="count-badge">
+    {{ imports.length }}
+  </span>
+
+</div>
+
+
+    @if (loadingHistory) {
+
+      <div class="state-card">
+        Cargando historial...
+      </div>
+
+    } @else if (imports.length === 0) {
+
+      <div class="state-card">
+        No hay importaciones registradas.
+      </div>
+
+    } @else {
+
+      <div class="table-card">
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+             <tr>
+                <th>Archivo</th>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Total</th>
+                <th>Válidos</th>
+                <th>Inválidos</th>
+                <th>Estado</th>
+                <th>Detalle</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+              @for (item of imports; track item.id) {
+
+                <tr>
+
+                    <td>
+                    <button
+                        type="button"
+                        class="file-link"
+                        (click)="viewImport(item.id)"
+                    >
+                        {{ item.original_filename }}
+                    </button>
+                    </td>
+
+                  <td>
+                    {{ item.uploaded_at | date:'dd/MM/yyyy HH:mm' }}
+                  </td>
+
+                  <td>
+                    {{ item.uploaded_by_name }}
+                  </td>
+
+                  <td>
+                    {{ item.total_records }}
+                  </td>
+
+                  <td class="valid">
+                    {{ item.valid_records }}
+                  </td>
+
+                  <td class="invalid">
+                    {{ item.invalid_records }}
+                  </td>
+
+                    <td class="status-cell">
+                      @if (item.status === 'COMPLETADO') {
+                        <span
+                          class="status-icon completed"
+                          title="Importación completada"
+                          aria-label="Importación completada"
+                        >
+                          ✓
+                        </span>
+                      } @else if (item.status === 'ERROR') {
+                        <span
+                          class="status-icon failed"
+                          title="Importación con error"
+                          aria-label="Importación con error"
+                        >
+                          ×
+                        </span>
+                      } @else {
+                        <span
+                          class="status-icon processing"
+                          title="Importación en proceso"
+                          aria-label="Importación en proceso"
+                        >
+                          ◷
+                        </span>
+                      }
+                    </td>
+
+                      <td class="detail-cell">
+                        <button
+                          type="button"
+                          class="detail-button"
+                          (click)="viewImport(item.id)"
+                          title="Ver detalle"
+                          aria-label="Ver detalle de importación"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M12 5c5.5 0 9.5 4.5 10.5 7-1 2.5-5 7-10.5 7S2.5 14.5 1.5 12C2.5 9.5 6.5 5 12 5Z"
+                            />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="3"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+          @if (!loadingHistory && totalPages > 1) {
+  <div class="pagination">
+
+    <button
+      type="button"
+      class="pagination-arrow"
+      (click)="previousPage()"
+      [disabled]="currentPage === 1"
+      aria-label="Página anterior"
+    >
+      ‹
+    </button>
+
+    @for (page of pages; track page) {
+      <button
+        type="button"
+        class="pagination-page"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+    }
+
+    <button
+      type="button"
+      class="pagination-arrow"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+      aria-label="Página siguiente"
+    >
+      ›
+    </button>
+
+  </div>
+}
+
+        </div>
+
+      </div>
+
+    } 
+
+  </section>
+
+  @if (loadingDetail) {
+
+  <div class="modal-backdrop">
+    <div class="modal loading-modal">
+      <span>Cargando detalle...</span>
+    </div>
+  </div>
+
+}
+
+@if (selectedImport) {
+
+  <div class="modal-backdrop">
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="eyebrow">Detalle de importación</span>
+
+          <h2>
+            {{ selectedImport.original_filename }}
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeDetail()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="detail-grid">
+
+        <div>
+          <span>Fecha de carga</span>
+          <strong>
+            {{ selectedImport.uploaded_at | date:'dd/MM/yyyy HH:mm' }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Usuario</span>
+          <strong>
+            {{ selectedImport.uploaded_by_name }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Estado</span>
+          <strong>
+            {{ selectedImport.status }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Total registros</span>
+          <strong>
+            {{ selectedImport.total_records }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Registros válidos</span>
+          <strong class="valid">
+            {{ selectedImport.valid_records }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Registros inválidos</span>
+          <strong class="invalid">
+            {{ selectedImport.invalid_records }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="errors-heading">
+
+        <div>
+          <span class="eyebrow">Validación</span>
+          <h3>Errores detectados</h3>
+        </div>
+
+        <span class="count-badge">
+          {{ importErrors.length }}
+        </span>
+
+      </div>
+
+
+      @if (importErrors.length === 0) {
+
+        <div class="no-errors">
+          No se encontraron errores en esta importación.
+        </div>
+
+      } @else {
+
+        <div class="errors-table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Fila</th>
+                <th>Campo</th>
+                <th>Valor recibido</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (error of importErrors; track error.id) {
+
+                <tr>
+
+                  <td>
+                    {{ error.row_number }}
+                  </td>
+
+                  <td>
+                    <strong>{{ error.field }}</strong>
+                  </td>
+
+                  <td>
+                    {{ error.received_value || '—' }}
+                  </td>
+
+                  <td>
+                    {{ error.description }}
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+}
+
+</section>

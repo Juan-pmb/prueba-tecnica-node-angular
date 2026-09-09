@@ -26,38 +26,41 @@ const processImport = async (filePath, originalFilename, userId) => {
     const { validRows, errors } = transformRows(rows);
 
     // LOAD
-    const loadedRecords = await loadValidRows(validRows, importId);
+// LOAD
+await loadValidRows(validRows, importId);
 
-    await loadErrors(errors, importId);
+await loadErrors(errors, importId);
 
 const totalRecords = rows.length;
+const validRecords = validRows.length;
+
 const invalidRecords = new Set(
   errors.map((error) => error.rowNumber)
 ).size;
 
-    await pool.query(
-      `UPDATE imports
-       SET total_records = $1,
-           valid_records = $2,
-           invalid_records = $3,
-           status = $4
-       WHERE id = $5`,
-      [
-        totalRecords,
-        loadedRecords,
-        invalidRecords,
-        'COMPLETADO',
-        importId
-      ]
-    );
+await pool.query(
+  `UPDATE imports
+   SET total_records = $1,
+       valid_records = $2,
+       invalid_records = $3,
+       status = $4
+   WHERE id = $5`,
+  [
+    totalRecords,
+    validRecords,
+    invalidRecords,
+    'COMPLETADO',
+    importId
+  ]
+);
 
-    return {
-      importId,
-      totalRecords,
-      validRecords: loadedRecords,
-      invalidRecords,
-      status: 'COMPLETADO'
-    };
+return {
+  importId,
+  totalRecords,
+  validRecords,
+  invalidRecords,
+  status: 'COMPLETADO'
+};
   } catch (error) {
     await pool.query(
       `UPDATE imports
@@ -70,24 +73,46 @@ const invalidRecords = new Set(
   }
 };
 
-const getImports = async () => {
-  const result = await pool.query(
-    `SELECT
-      i.id,
-      i.original_filename,
-      i.uploaded_at,
-      i.uploaded_by,
-      u.name AS uploaded_by_name,
-      i.total_records,
-      i.valid_records,
-      i.invalid_records,
-      i.status
-     FROM imports i
-     INNER JOIN users u ON u.id = i.uploaded_by
-     ORDER BY i.id DESC`
-  );
+const getImports = async (page = 1, limit = 6) => {
+  const offset = (page - 1) * limit;
 
-  return result.rows;
+  const [importsResult, countResult] = await Promise.all([
+    pool.query(
+      `SELECT
+        i.id,
+        i.original_filename,
+        i.uploaded_at,
+        i.uploaded_by,
+        u.name AS uploaded_by_name,
+        i.total_records,
+        i.valid_records,
+        i.invalid_records,
+        i.status
+       FROM imports i
+       INNER JOIN users u ON u.id = i.uploaded_by
+       ORDER BY i.id DESC
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    ),
+
+    pool.query(
+      `SELECT COUNT(*)::int AS total
+       FROM imports`
+    )
+  ]);
+
+  const total = countResult.rows[0].total;
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data: importsResult.rows,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages
+    }
+  };
 };
 
 const getImportById = async (importId) => {

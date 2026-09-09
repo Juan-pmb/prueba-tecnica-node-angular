@@ -1,0 +1,98 @@
+<div class="app-shell">
+
+  <header class="topbar">
+
+    <div class="brand">
+      <div class="brand-icon">IT</div>
+    </div>
+
+    <nav class="main-nav">
+
+      <a
+        class="nav-item"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span>Inicio</span>
+      </a>
+
+      @if (authService.hasRole(['ADMIN', 'OPERADOR'])) {
+        <a
+          class="nav-item"
+          routerLink="/imports"
+          routerLinkActive="active"
+        >
+          <span>Importaciones</span>
+        </a>
+      }
+
+      <a
+        class="nav-item"
+        routerLink="/records"
+        routerLinkActive="active"
+      >
+        <span>Registros</span>
+      </a>
+
+      <a
+        class="nav-item"
+        routerLink="/errors"
+        routerLinkActive="active"
+      >
+        <span>Errores</span>
+      </a>
+
+      <a
+        class="nav-item"
+        routerLink="/reports"
+        routerLinkActive="active"
+      >
+        <span>Reportes</span>
+      </a>
+
+      @if (authService.hasRole(['ADMIN'])) {
+        <a
+          class="nav-item"
+          routerLink="/users"
+          routerLinkActive="active"
+        >
+          <span>Usuarios</span>
+        </a>
+      }
+
+    </nav>
+
+    <div class="user-area">
+
+      <div class="user-avatar">
+        {{ authService.getUser()?.name?.charAt(0)?.toUpperCase() || 'U' }}
+      </div>
+
+      <div class="user-data">
+        <strong>
+          {{ authService.getUser()?.name || 'Usuario' }}
+        </strong>
+
+        <span>
+          {{ authService.getUser()?.role || '' }}
+        </span>
+      </div>
+
+      <button
+        class="logout-button"
+        type="button"
+        (click)="logout()"
+      >
+        Salir
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+
+</div>

@@ -10,18 +10,20 @@ const getRecords = async ({
   const conditions = [];
   const values = [];
 
-  if (search) {
-    values.push(`%${search}%`);
+if (search) {
+  values.push(`%${search}%`);
 
-    conditions.push(`
-      (
-        document ILIKE $${values.length}
-        OR first_name ILIKE $${values.length}
-        OR last_name ILIKE $${values.length}
-        OR email ILIKE $${values.length}
-      )
-    `);
-  }
+  conditions.push(`
+    (
+      document ILIKE $${values.length}
+      OR first_name ILIKE $${values.length}
+      OR last_name ILIKE $${values.length}
+      OR email ILIKE $${values.length}
+      OR CONCAT_WS(' ', first_name, last_name) ILIKE $${values.length}
+      OR CONCAT_WS(' ', last_name, first_name) ILIKE $${values.length}
+    )
+  `);
+}
 
   if (status) {
     values.push(status);

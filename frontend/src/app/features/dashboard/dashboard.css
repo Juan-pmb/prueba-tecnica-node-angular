@@ -1,0 +1,163 @@
+.dashboard {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Encabezado */
+
+.page-header {
+  margin-bottom: 28px;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: #102a43;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.page-header p {
+  margin: 7px 0 0;
+  color: #718096;
+  font-size: 14px;
+}
+
+/* Tarjetas principales */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  min-height: 130px;
+  padding: 22px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #e7edf3;
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(18, 45, 72, 0.04);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px rgba(18, 45, 72, 0.07);
+}
+
+.stat-label {
+  display: block;
+  color: #627d98;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stat-value {
+  display: block;
+  margin-top: 15px;
+  color: #102a43;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Resumen */
+
+.summary-card {
+  margin-top: 24px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e7edf3;
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(18, 45, 72, 0.04);
+}
+
+.summary-header {
+  margin-bottom: 20px;
+}
+
+.summary-header h2 {
+  margin: 0;
+  color: #243b53;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.summary-grid div {
+  padding: 16px;
+  background: #f8fbfd;
+  border: 1px solid #edf2f6;
+  border-radius: 10px;
+}
+
+.summary-grid span {
+  display: block;
+  color: #718096;
+  font-size: 12px;
+}
+
+.summary-grid strong {
+  display: block;
+  margin-top: 7px;
+  color: #102a43;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Estados */
+
+.loading,
+.error-message {
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.loading {
+  color: #627d98;
+  background: #ffffff;
+  border: 1px solid #e7edf3;
+}
+
+.error-message {
+  color: #9b4b4b;
+  background: #fffafa;
+  border: 1px solid #f1dada;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+  }
+}

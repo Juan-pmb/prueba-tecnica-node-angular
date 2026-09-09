@@ -1,0 +1,147 @@
+<section class="errors-page">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Errores</h1>
+      <p>
+        Consulta los errores encontrados durante el procesamiento ETL.
+      </p>
+    </div>
+
+    <div class="total-badge">
+      {{ totalErrors }} errores
+    </div>
+
+  </div>
+
+  @if (errorMessage) {
+    <div class="message error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="table-card">
+
+    @if (loading) {
+
+      <div class="loading">
+        Cargando errores...
+      </div>
+
+    } @else if (errors.length === 0) {
+
+      <div class="empty-state">
+        <strong>No hay errores registrados</strong>
+        <span>
+          Las importaciones procesadas no presentan errores.
+        </span>
+      </div>
+
+    } @else {
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Importación</th>
+              <th>Fila</th>
+              <th>Campo</th>
+              <th>Valor recibido</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (item of errors; track item.id) {
+
+              <tr>
+
+                <td>
+                  <div class="import-cell">
+                    <strong>#{{ item.import_id }}</strong>
+                    <span>{{ item.original_filename }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="row-number">
+                    {{ item.row_number }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="field">
+                    {{ item.field }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="received-value">
+                    {{ item.received_value || '—' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="description">
+                    {{ item.description }}
+                  </span>
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      @if (totalPages > 1) {
+
+        <div class="pagination">
+
+          <button
+            type="button"
+            class="pagination-arrow"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+          >
+            ‹
+          </button>
+
+          @for (page of pages; track page) {
+
+            <button
+              type="button"
+              class="pagination-page"
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+
+          }
+
+          <button
+            type="button"
+            class="pagination-arrow"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            ›
+          </button>
+
+        </div>
+
+      }
+
+    }
+
+  </div>
+
+</section>
