@@ -202,4 +202,43 @@ test('should detect incomplete records', async () => {
   expect(response.body.validRecords).toBe(0);
   expect(response.body.invalidRecords).toBe(1);
 });
+
+test('should return import details by id', async () => {
+  const loginResponse = await request(app)
+    .post('/api/auth/login')
+    .send({
+      email: 'admin@prueba.com',
+      password: 'Admin123'
+    });
+
+  const token = loginResponse.body.token;
+
+  const document = `${Date.now()}06`;
+
+  const csv = [
+    'tipo_documento,documento,nombres,apellidos,fecha_nacimiento,email,ciudad,estado',
+    `CC,${document},Juan,Perez,1990-05-10,juan@test.com,Bogota,ACTIVO`
+  ].join('\n');
+
+  const importResponse = await request(app)
+    .post('/api/imports')
+    .set('Authorization', `Bearer ${token}`)
+    .attach('file', Buffer.from(csv), 'detail.csv');
+
+  expect(importResponse.statusCode).toBe(201);
+
+  const importId = importResponse.body.importId;
+
+  const response = await request(app)
+    .get(`/api/imports/${importId}`)
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body).toHaveProperty('id', importId);
+  expect(response.body).toHaveProperty('original_filename', 'detail.csv');
+  expect(response.body).toHaveProperty('total_records', 1);
+  expect(response.body).toHaveProperty('valid_records', 1);
+  expect(response.body).toHaveProperty('invalid_records', 0);
+  expect(response.body).toHaveProperty('status', 'COMPLETADO');
+});
 });
