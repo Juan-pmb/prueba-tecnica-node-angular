@@ -90,6 +90,27 @@ const getImports = async () => {
   return result.rows;
 };
 
+const getImportById = async (importId) => {
+  const result = await pool.query(
+    `SELECT
+      i.id,
+      i.original_filename,
+      i.uploaded_at,
+      i.uploaded_by,
+      u.name AS uploaded_by_name,
+      i.total_records,
+      i.valid_records,
+      i.invalid_records,
+      i.status
+     FROM imports i
+     INNER JOIN users u ON u.id = i.uploaded_by
+     WHERE i.id = $1`,
+    [importId]
+  );
+
+  return result.rows[0] || null;
+};
+
 const getImportErrors = async (importId) => {
   const result = await pool.query(
     `SELECT
@@ -111,5 +132,6 @@ const getImportErrors = async (importId) => {
 module.exports = {
   processImport,
   getImports,
+  getImportById,
   getImportErrors
 };

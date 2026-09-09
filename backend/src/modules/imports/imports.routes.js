@@ -27,4 +27,10 @@ router.get(
   importsController.getImportErrors
 );
 
+router.get(
+  '/:id',
+  authenticateToken,
+  importsController.getImportById
+);
+
 module.exports = router;

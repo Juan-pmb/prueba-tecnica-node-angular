@@ -44,6 +44,28 @@ const getImports = async (req, res) => {
   }
 };
 
+const getImportById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const importData = await importsService.getImportById(id);
+
+    if (!importData) {
+      return res.status(404).json({
+        message: 'Importación no encontrada'
+      });
+    }
+
+    return res.status(200).json(importData);
+  } catch (error) {
+    console.error('Error obteniendo importación:', error);
+
+    return res.status(500).json({
+      message: 'Error interno del servidor'
+    });
+  }
+};
+
 const getImportErrors = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,8 +82,11 @@ const getImportErrors = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   createImport,
   getImports,
+  getImportById,
   getImportErrors
 };

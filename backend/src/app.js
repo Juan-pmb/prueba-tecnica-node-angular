@@ -19,4 +19,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.use((err, req, res, next) => {
+  if (err.message === 'Solo se permiten archivos CSV') {
+    return res.status(400).json({
+      message: err.message
+    });
+  }
+
+  next(err);
+});
 module.exports = app;

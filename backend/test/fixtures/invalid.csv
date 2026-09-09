@@ -1,0 +1,3 @@
+tipo_documento,documento,nombres,apellidos,fecha_nacimiento,email,ciudad,estado
+CC,99999993,Maria,Lopez,1992-06-15,maria@test.com,Bogota,ACTIVO
+CC,ABC999,,Perez,2025-02-30,correo-invalido,Medellin,ACTIVO
